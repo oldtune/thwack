@@ -22,7 +22,8 @@ fn cannot_move_up_because_selection_reaches_to_top() {
     event.add(Some(Event::Key(KeyCode::Up.into())));
     event.add(Some(Event::Key(KeyCode::Esc.into())));
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, event);
+    let mut stderr = buf!();
+    let result = entrypoint(args, &mut buffer, &mut stderr, MockTerminal, event);
     assert!(result.is_ok());
     assert_eq!(
         buffer.normalize_path(),
@@ -143,7 +144,8 @@ fn cannot_move_down_because_selection_reaches_to_bottom() {
     event.add(Some(Event::Key(KeyCode::Down.into())));
     event.add(Some(Event::Key(KeyCode::Esc.into())));
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, event);
+    let mut stderr = buf!();
+    let result = entrypoint(args, &mut buffer, &mut stderr, MockTerminal, event);
     assert!(result.is_ok());
     assert_eq!(
         buffer.normalize_path(),

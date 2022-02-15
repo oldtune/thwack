@@ -16,6 +16,7 @@ use crossterm::{
 use crate::args::{ParsedArgs, Parser, StatusLine, HELP};
 use crate::error::Result;
 use crate::finder::Finder;
+use crate::logger::Logger;
 use crate::matched_path::MatchedPath;
 use crate::starting_point::StartingPoint;
 use crate::terminal::{Terminal, TerminalEvent};
@@ -27,9 +28,10 @@ pub fn safe_exit(code: i32, stdout: Stdout, stderr: Stderr) {
     exit(code)
 }
 
-pub fn entrypoint<A: Iterator<Item = OsString>, W: Write>(
+pub fn entrypoint<A: Iterator<Item = OsString>, O: Write, E: Write>(
     args: A,
-    stdout: &mut W,
+    stdout: &mut O,
+    stderr: &mut E,
     terminal: impl Terminal,
     mut event: impl TerminalEvent,
 ) -> Result<()> {
@@ -46,6 +48,7 @@ pub fn entrypoint<A: Iterator<Item = OsString>, W: Write>(
         return Ok(());
     }
 
+    let mut logger = Logger::new(stderr, args.debug);
     let (mut columns, mut rows) = terminal.size()?;
     let starting_point = StartingPoint::new(&args.starting_point)?;
     let mut query = args.query.clone();
@@ -53,6 +56,8 @@ pub fn entrypoint<A: Iterator<Item = OsString>, W: Write>(
     let mut selection: u16 = 0;
     let mut state = State::QueryChanged;
     initialize_terminal(stdout, &terminal)?;
+    logger.debug(&format!("Terminal has been initialized."))?;
+    logger.warn(&format!("Terminal has been initialized."))?;
 
     loop {
         match state {

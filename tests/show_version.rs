@@ -13,7 +13,14 @@ fn version() -> String {
 fn show_version() {
     let args = args!["thwack", "--version"];
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, MockTerminalEvent::new());
+    let mut stderr = buf!();
+    let result = entrypoint(
+        args,
+        &mut buffer,
+        &mut stderr,
+        MockTerminal,
+        MockTerminalEvent::new(),
+    );
     assert!(result.is_ok());
     assert_eq!(buffer, buf!(version()));
 }
@@ -22,7 +29,14 @@ fn show_version() {
 fn show_version_with_query() {
     let args = args!["thwack", "--version", "--", "query"];
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, MockTerminalEvent::new());
+    let mut stderr = buf!();
+    let result = entrypoint(
+        args,
+        &mut buffer,
+        &mut stderr,
+        MockTerminal,
+        MockTerminalEvent::new(),
+    );
     assert!(result.is_ok());
     assert_eq!(buffer, buf!(version()));
 }
@@ -31,7 +45,14 @@ fn show_version_with_query() {
 fn show_version_with_starting_point() {
     let args = args!["thwack", "--version", "--starting-point=/tmp"];
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, MockTerminalEvent::new());
+    let mut stderr = buf!();
+    let result = entrypoint(
+        args,
+        &mut buffer,
+        &mut stderr,
+        MockTerminal,
+        MockTerminalEvent::new(),
+    );
     assert!(result.is_ok());
     assert_eq!(buffer, buf!(version()));
 }

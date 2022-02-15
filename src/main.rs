@@ -5,10 +5,11 @@ use thwack::{entrypoint, safe_exit, DefaultTerminal, DefaultTerminalEvent};
 
 fn main() {
     let mut out = stdout();
-    let err = stderr();
+    let mut err = stderr();
     match entrypoint(
         env::args_os(),
         &mut out,
+        &mut err,
         DefaultTerminal,
         DefaultTerminalEvent,
     ) {

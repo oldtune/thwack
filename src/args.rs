@@ -21,6 +21,7 @@ OPTIONS:
     --status-line <TYPE>      Change the information on the status line.
                               The possible values are \"absolute\", \"relative\", and \"none.\"
                               The default is \"absolute.\"
+    --debug                   Enable debug mode
     -h, --help                Prints help information
     -v, --version             Prints version info and exit
 ";
@@ -53,6 +54,7 @@ impl<A: Iterator<Item = OsString>> Parser<A> {
                 "--help" => self.set_help(true),
                 "-v" => self.set_version(true),
                 "--version" => self.set_version(true),
+                "--debug" => self.set_debug(true),
                 "--exec" => self.set_exec(None)?,
                 "--starting-point" => self.set_starting_point(None)?,
                 "--status-line" => self.set_status_line(None)?,
@@ -115,6 +117,10 @@ impl<A: Iterator<Item = OsString>> Parser<A> {
 
     fn set_version(&mut self, value: bool) {
         self.parsed_args.version = value;
+    }
+
+    fn set_debug(&mut self, value: bool) {
+        self.parsed_args.debug = value;
     }
 
     fn set_starting_point(&mut self, value: Option<&str>) -> Result<()> {
@@ -188,6 +194,7 @@ impl TryFrom<String> for StatusLine {
 pub(crate) struct ParsedArgs {
     pub(crate) help: bool,
     pub(crate) version: bool,
+    pub(crate) debug: bool,
     pub(crate) starting_point: String,
     pub(crate) status_line: StatusLine,
     pub(crate) query: String,
@@ -199,6 +206,7 @@ impl Default for ParsedArgs {
         Self {
             help: false,
             version: false,
+            debug: false,
             starting_point: String::from("."),
             status_line: StatusLine::Absolute,
             query: String::from(""),
@@ -313,6 +321,37 @@ mod tests {
             ParsedArgs {
                 help: true,
                 version: true,
+                ..default!()
+            }
+        );
+    }
+
+    #[test]
+    fn parser_with_debug() {
+        assert_eq!(
+            Parser::new(args!["program", "--debug"]).parse().unwrap(),
+            ParsedArgs {
+                debug: true,
+                ..default!()
+            }
+        );
+        assert_eq!(
+            Parser::new(args!["program", "-h", "--debug"])
+                .parse()
+                .unwrap(),
+            ParsedArgs {
+                help: true,
+                debug: true,
+                ..default!()
+            }
+        );
+        assert_eq!(
+            Parser::new(args!["program", "--debug", "--help"])
+                .parse()
+                .unwrap(),
+            ParsedArgs {
+                help: true,
+                debug: true,
                 ..default!()
             }
         );
@@ -611,6 +650,7 @@ mod tests {
             ParsedArgs {
                 help: false,
                 version: false,
+                debug: false,
                 starting_point: String::from("."),
                 status_line: StatusLine::Absolute,
                 query: String::from(""),

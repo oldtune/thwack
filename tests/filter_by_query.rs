@@ -19,7 +19,8 @@ fn show_all_as_many_as_the_size_of_terminal_without_query() {
     let mut event = MockTerminalEvent::new();
     event.add(Some(Event::Key(KeyCode::Esc.into())));
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, event);
+    let mut stderr = buf!();
+    let result = entrypoint(args, &mut buffer, &mut stderr, MockTerminal, event);
     assert!(result.is_ok());
     assert_eq!(
         buffer.normalize_path(),
@@ -64,7 +65,8 @@ fn show_filtered_paths_with_query() {
     let mut event = MockTerminalEvent::new();
     event.add(Some(Event::Key(KeyCode::Esc.into())));
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, event);
+    let mut stderr = buf!();
+    let result = entrypoint(args, &mut buffer, &mut stderr, MockTerminal, event);
     assert!(result.is_ok());
     assert_eq!(
         buffer.normalize_path(),
@@ -100,7 +102,8 @@ fn show_filtered_paths_with_query_interactively() {
     event.add(None);
     event.add(Some(Event::Key(KeyCode::Esc.into())));
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, event);
+    let mut stderr = buf!();
+    let result = entrypoint(args, &mut buffer, &mut stderr, MockTerminal, event);
     assert!(result.is_ok());
     assert_eq!(
         buffer.normalize_path(),
@@ -309,7 +312,8 @@ fn show_filtered_paths_with_query_interactively_including_backspace() {
     event.add(None);
     event.add(Some(Event::Key(KeyCode::Esc.into())));
     let mut buffer = buf!();
-    let result = entrypoint(args, &mut buffer, MockTerminal, event);
+    let mut stderr = buf!();
+    let result = entrypoint(args, &mut buffer, &mut stderr, MockTerminal, event);
     assert!(result.is_ok());
     assert_eq!(
         buffer.normalize_path(),
